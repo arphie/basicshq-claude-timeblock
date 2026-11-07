@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "calendar-sync-api": {
+      "type": "http",
+      "url": "https://REPLACE-ME.example.com/mcp"
+    }
+  }
+}

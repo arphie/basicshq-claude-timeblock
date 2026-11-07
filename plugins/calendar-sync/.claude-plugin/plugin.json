@@ -1,0 +1,11 @@
+{
+  "name": "calendar-sync",
+  "displayName": "Calendar Sync",
+  "version": "0.1.0",
+  "description": "Sets up a daily task that sends your calendar events for the day to the team's time-tracking API.",
+  "author": {
+    "name": "REPLACE-ME Your Name or Team",
+    "email": "replace-me@example.com"
+  },
+  "license": "MIT"
+}

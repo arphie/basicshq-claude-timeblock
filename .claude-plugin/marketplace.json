@@ -1,0 +1,16 @@
+{
+  "name": "calendar-sync-marketplace",
+  "description": "Plugins that send your daily calendar to the team's time-tracking API.",
+  "owner": {
+    "name": "REPLACE-ME Your Name or Team",
+    "email": "replace-me@example.com"
+  },
+  "plugins": [
+    {
+      "name": "calendar-sync",
+      "source": "./plugins/calendar-sync",
+      "description": "Sends each workday's calendar events to the team's time-tracking API on a daily schedule.",
+      "category": "productivity"
+    }
+  ]
+}
