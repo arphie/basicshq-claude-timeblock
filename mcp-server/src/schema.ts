@@ -24,11 +24,18 @@ export type CalendarEvent = z.infer<typeof EventSchema>;
 
 /** Input shape for the submit_events tool. An empty array is valid and means "ran, no events today". */
 export const SubmitEventsInput = {
-  events: z.array(EventSchema).max(1000).describe("All of today's events. Send [] when there are none."),
+  events: z
+    .array(EventSchema)
+    .max(1000)
+    .describe("All finished, non-cancelled events in the sync window (the past days). Send [] when there are none."),
 };
 
 export const SubmitEventsOutput = {
   received: z.number().int(),
   new: z.number().int(),
   duplicates: z.number().int(),
+  /** Events whose end time is still in the future. Never stored: only meetings that already happened are synced. */
+  not_finished: z.number().int(),
+  /** Cancelled events. Never stored. */
+  cancelled: z.number().int(),
 };

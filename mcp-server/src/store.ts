@@ -11,14 +11,18 @@ export interface EventStore {
 }
 
 /**
- * Idempotency key: user + event_id + updated_at.
+ * Idempotency key: user + event_id + the event's local start date.
+ *
+ * Synced entries are never changed, so later edits to a meeting (new updated_at, new time on the
+ * same day) don't create a second entry. The date is part of the key so that a past meeting
+ * dragged to a different day (same event_id) is logged again for the day it really happened.
+ * `start` carries the user's own UTC offset, so its first 10 characters are the local date.
  *
  * The user is part of the key because a shared meeting can have the same event_id on every
  * attendee's calendar (Google Calendar does this), so two colleagues must not dedupe each other.
- * A null updated_at is keyed as "null", so an event whose calendar gives no timestamp is stored once.
  */
 export function dedupeKey(userId: string, e: CalendarEvent): string {
-  return JSON.stringify([userId, e.event_id, e.updated_at ?? null]);
+  return JSON.stringify([userId, e.event_id, e.start.slice(0, 10)]);
 }
 
 /**
@@ -28,12 +32,12 @@ export function dedupeKey(userId: string, e: CalendarEvent): string {
  *   CREATE TABLE calendar_events (
  *     user_id     text        NOT NULL,
  *     event_id    text        NOT NULL,
- *     updated_at  timestamptz NULL,
+ *     event_date  date        NOT NULL,
  *     payload     jsonb       NOT NULL,
  *     received_at timestamptz NOT NULL DEFAULT now()
  *   );
  *   CREATE UNIQUE INDEX calendar_events_dedupe
- *     ON calendar_events (user_id, event_id, updated_at) NULLS NOT DISTINCT;  -- Postgres 15+
+ *     ON calendar_events (user_id, event_id, event_date);  -- event_date = local start date
  *   -- plus a sync_runs(user_id, run_at, event_count) table so empty runs are recorded too.
  * and insert with `INSERT ... ON CONFLICT DO NOTHING RETURNING event_id` to count new rows.
  */

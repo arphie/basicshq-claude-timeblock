@@ -1,6 +1,6 @@
 # Calendar Sync
 
-Calendar Sync is a Claude plugin. Once it's set up, Claude sends that day's meetings from your work calendar to the team's time-tracking system every weekday, so you don't have to log them by hand. It sends each event's title, start and end times, attendee count, whether it's all-day, whether it was cancelled, and when it was last changed. It doesn't send descriptions, attendee names or locations, and it skips meetings you declined.
+Calendar Sync is a Claude plugin. Once it's set up, Claude sends the meetings you've already had from your work calendar to the team's time-tracking system every weekday morning, so you don't have to log them by hand. Meetings are only sent after they've finished: each run covers the past seven days, and anything already sent is ignored, so Monday picks up Friday and the weekend and a missed run catches up the next day. Once sent, an entry isn't changed by later edits to the meeting. It sends each event's title, start and end times, attendee count, whether it's all-day, and when it was last changed. It doesn't send descriptions, attendee names or locations, and it skips meetings you declined, cancelled meetings and meetings that haven't ended yet.
 
 ## For colleagues
 
@@ -60,7 +60,7 @@ docker build -t calendar-sync-mcp .
 docker run --rm -p 3000:3000 calendar-sync-mcp
 ```
 
-The server is stateless Streamable HTTP (`POST /mcp`). Each call to `submit_events` is logged as one JSON line. Deduplication is in memory, keyed on user + `event_id` + `updated_at`, so it resets on restart. See the `TODO(postgres)` comment in `src/store.ts`.
+The server is stateless Streamable HTTP (`POST /mcp`). Each call to `submit_events` is logged as one JSON line. Deduplication is in memory, keyed on user + `event_id` + the event's local start date, so it resets on restart. The server also refuses events that haven't ended yet and cancelled events, even if the task sends them. See the `TODO(postgres)` comment in `src/store.ts`.
 
 **Auth is not implemented.** Every request is treated as the same anonymous user. Don't point real colleagues at this server until per-user OAuth is in place; see the `TODO(auth)` comment in `src/index.ts`. Don't add a shared API key to `.mcp.json`: every person who installs the plugin receives that file.
 

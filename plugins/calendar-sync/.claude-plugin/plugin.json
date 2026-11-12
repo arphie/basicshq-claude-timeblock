@@ -1,7 +1,7 @@
 {
   "name": "calendar-sync",
   "displayName": "Calendar Sync",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Sets up a daily task that sends your calendar events for the day to the team's time-tracking API.",
   "author": {
     "name": "REPLACE-ME Your Name or Team",

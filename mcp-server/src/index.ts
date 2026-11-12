@@ -33,15 +33,26 @@ function buildServer(userId: string): McpServer {
     {
       title: "Submit calendar events",
       description:
-        "Submit all of the user's calendar events for one day. Call exactly once per run with the full array; " +
-        "call with an empty array when there are no events so the run is still recorded. Duplicate events " +
-        "(same event_id and updated_at) are ignored.",
+        "Submit the user's finished calendar events from the sync window (the past days). Call exactly once per " +
+        "run with the full array; call with an empty array when there are no events so the run is still recorded. " +
+        "Only meetings that have already ended are stored: events that end in the future and cancelled events " +
+        "are refused. Events already stored (same event_id on the same day) are ignored, so resending is safe.",
       inputSchema: SubmitEventsInput,
       outputSchema: SubmitEventsOutput,
       annotations: { idempotentHint: true, destructiveHint: false, openWorldHint: false },
     },
     async ({ events }) => {
-      const result = await store.ingest(userId, events);
+      // Never sync a meeting before it has happened, even if the task sends one by mistake.
+      const now = Date.now();
+      const cancelled = events.filter((e) => e.status === "cancelled").length;
+      const notFinished = events.filter((e) => e.status !== "cancelled" && Date.parse(e.end) > now).length;
+      const finished = events.filter((e) => e.status !== "cancelled" && Date.parse(e.end) <= now);
+      const result = {
+        ...(await store.ingest(userId, finished)),
+        received: events.length,
+        not_finished: notFinished,
+        cancelled,
+      };
       console.log(
         JSON.stringify({
           at: new Date().toISOString(),
@@ -55,7 +66,11 @@ function buildServer(userId: string): McpServer {
         content: [
           {
             type: "text",
-            text: `Received ${result.received} events: ${result.new} new, ${result.duplicates} duplicates.`,
+            text:
+              `Received ${result.received} events: ${result.new} new, ${result.duplicates} already synced` +
+              (result.not_finished ? `, ${result.not_finished} not finished yet (skipped)` : "") +
+              (result.cancelled ? `, ${result.cancelled} cancelled (skipped)` : "") +
+              ".",
           },
         ],
         structuredContent: { ...result },

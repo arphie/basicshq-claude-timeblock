@@ -1,6 +1,6 @@
 ---
 name: setup-calendar-sync
-description: Set up calendar sync, a task that runs every weekday and sends the user's calendar events for that day to the team's time-tracking system. Use when the user types /setup-calendar-sync or /calendar-sync:setup-calendar-sync, or says "set up calendar sync", "turn on calendar sync", "sync my calendar", or asks to change the time their calendar sync runs.
+description: Set up calendar sync, a task that runs every weekday morning and sends the user's finished calendar events from the previous days to the team's time-tracking system. Use when the user types /setup-calendar-sync or /calendar-sync:setup-calendar-sync, or says "set up calendar sync", "turn on calendar sync", "sync my calendar", or asks to change the time their calendar sync runs.
 ---
 
 # Set up calendar sync
@@ -41,9 +41,9 @@ Work out the person's time zone from what you know about them (their device, pro
 
 Ask one question:
 
-> Calendar Sync will send your calendar at the end of each workday. Is 6:00 pm, [their time zone, for example "New York time"], good for you, or would you like a different time?
+> Calendar Sync sends your meetings once they've happened, so it runs each weekday morning and sends the meetings from the days before. Is 8:00 am, [their time zone, for example "New York time"], good for you, or would you like a different time?
 
-- If they agree, use 6:00 pm in that time zone.
+- If they agree, use 8:00 am in that time zone.
 - If they give another time or time zone, use theirs. Turn it into 24-hour time (for example 17:30) and an IANA time zone name (for example `America/New_York`) for your own use. Don't show those formats to them.
 
 ## Step 4: Create the scheduled task
@@ -76,7 +76,7 @@ Then give them the filled-in text from step 2 in a single code block so it's eas
 
 Tell the person what you set up in one sentence, then add the note about approvals. For example:
 
-> All set: every weekday at 6:00 pm New York time, Claude will send that day's meetings from your Google Calendar to the team's time-tracking system.
+> All set: every weekday at 8:00 am New York time, Claude will send the meetings you've already had from your Google Calendar to the team's time-tracking system. Monday's run picks up Friday and the weekend.
 >
 > When it runs, it may ask you to approve sending your calendar. To let it run without asking, click **Scheduled** in the left sidebar, open **Daily calendar sync**, and change its approval setting to run automatically.
 
@@ -90,29 +90,31 @@ This is the fixed text for the scheduled task. If you're a maintainer and change
 BEGIN TASK PROMPT
 Daily calendar sync. This runs unattended, so don't ask me questions. Follow these steps exactly.
 
-1. Work out today's date in the {{TIME_ZONE}} time zone. "Today" means 00:00 to 23:59:59 on that date in {{TIME_ZONE}}.
+1. Work out the current date and time in the {{TIME_ZONE}} time zone. The sync window starts at 00:00 seven days before today and ends at 00:00 today, both in {{TIME_ZONE}}. Only meetings that have already finished are sent. Meetings that were sent before are ignored by the time-tracking system, so sending them again is expected and harmless.
 
-2. Use the {{CALENDAR}} connector to list every event on my primary calendar that overlaps today. Include all-day events and cancelled events. If the results come in pages, fetch every page.
+2. Use the {{CALENDAR}} connector to list every event on my primary calendar that overlaps the sync window. Include all-day events. If the results come in pages, fetch every page.
    If the calendar can't be read (for example the connector is disconnected or returns an error), stop. Don't call submit_events. Reply with one line saying the calendar couldn't be read and why.
 
-3. Skip an event if either is true:
+3. Skip an event if any of these is true:
+   - it hasn't finished yet: its end time is later than the current time,
+   - it's cancelled,
    - I declined it (my own response is "declined"), or
    - its title is missing or blank.
 
 4. For each remaining event, build an object with exactly these fields, using only values the calendar returned:
-   - event_id: the calendar's own ID for the event. For a repeating event, use the ID of today's occurrence. If an event has no ID, skip it.
+   - event_id: the calendar's own ID for the event. For a repeating event, use the ID of that day's occurrence. If an event has no ID, skip it.
    - title: the event title, as written.
    - start: the start time in ISO 8601 with a UTC offset in {{TIME_ZONE}}, for example 2026-11-09T09:00:00-05:00. For an all-day event, use 00:00:00 on its first day.
    - end: the end time in the same format. For an all-day event, use 00:00:00 on the day after its last day.
    - attendees_count: the number of attendees listed on the event, or 0 if none are listed.
    - is_all_day: true for an all-day event, otherwise false.
-   - status: "cancelled" if the calendar marks the event cancelled, otherwise "confirmed".
+   - status: "confirmed".
    - updated_at: when the event was last changed, in ISO 8601 with a UTC offset, taken from the calendar. If the calendar doesn't provide it, use null.
 
 5. Call the submit_events tool from the calendar-sync-api connector once, with all the objects in a single "events" array. If no events remain, still call it once with an empty array, "events": [], so the server knows the run happened.
 
 6. Never invent events or values, never add fields that aren't listed above, and never guess a missing value. Don't call any tool that changes my calendar.
 
-7. Finish with one short line: the date, how many events you sent, and the summary that submit_events returned.
+7. Finish with one short line: the dates covered, how many events you sent, and the summary that submit_events returned.
 END TASK PROMPT
 ```
