@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "calendar-sync-api-local",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["/Users/kennetharphelbalboa/Documents/basicshq/backend/scripts/calendarSync/start-local.sh", "http://localhost:8081"],
+      "port": 8081
+    },
+    {
+      "name": "basicshq-web-local",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/kennetharphelbalboa/Documents/basicshq/frontend && exec npx next dev -p 3000"],
+      "port": 3000
+    }
+  ]
+}
