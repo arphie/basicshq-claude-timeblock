@@ -94,22 +94,23 @@ Daily calendar sync. This runs unattended, so don't ask me questions. Follow the
 
 1. Work out the current date and time in the {{TIME_ZONE}} time zone. The sync window starts at 00:00 seven days before today and ends at 00:00 today, both in {{TIME_ZONE}}. Only meetings that have already finished are sent. Meetings that were sent before are ignored by the time-tracking system, so sending them again is expected and harmless.
 
-2. Use the {{CALENDAR}} connector to list every event on my primary calendar that overlaps the sync window. Include all-day events. If the results come in pages, fetch every page.
+2. Use the {{CALENDAR}} connector to list every event on my primary calendar that overlaps the sync window. If the results come in pages, fetch every page.
    If the calendar can't be read (for example the connector is disconnected or returns an error), stop. Don't call submit_events. Reply with one line saying the calendar couldn't be read and why.
 
 3. Skip an event if any of these is true:
    - it hasn't finished yet: its end time is later than the current time,
    - it's cancelled,
-   - I declined it (my own response is "declined"), or
+   - I declined it (my own response is "declined"),
+   - it's an all-day event (it has a date but no start time), or
    - its title is missing or blank.
 
 4. For each remaining event, build an object with exactly these fields, using only values the calendar returned:
    - event_id: the calendar's own ID for the event. For a repeating event, use the ID of that day's occurrence. If an event has no ID, skip it.
    - title: the event title, as written.
-   - start: the start time in ISO 8601 with a UTC offset in {{TIME_ZONE}}, for example 2026-11-09T09:00:00-05:00. For an all-day event, use 00:00:00 on its first day.
-   - end: the end time in the same format. For an all-day event, use 00:00:00 on the day after its last day.
+   - start: the start time in ISO 8601 with a UTC offset in {{TIME_ZONE}}, for example 2026-11-09T09:00:00-05:00.
+   - end: the end time in the same format.
    - attendees_count: the number of attendees listed on the event, or 0 if none are listed.
-   - is_all_day: true for an all-day event, otherwise false.
+   - is_all_day: false.
    - status: "confirmed".
    - updated_at: when the event was last changed, in ISO 8601 with a UTC offset, taken from the calendar. If the calendar doesn't provide it, use null.
 

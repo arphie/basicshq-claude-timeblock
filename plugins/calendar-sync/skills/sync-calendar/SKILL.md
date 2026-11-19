@@ -32,7 +32,7 @@ Don't mention these checks when both connections are there.
 
 ## Step 3: Read the calendar
 
-List every event on their primary calendar that overlaps the window. Include all-day events. If the results come in pages, fetch every page.
+List every event on their primary calendar that overlaps the window. If the results come in pages, fetch every page.
 
 If the calendar can't be read, tell them in one sentence and stop. Don't send anything.
 
@@ -40,7 +40,8 @@ Skip an event if any of these is true:
 
 - it hasn't finished yet: its end time is later than the current time,
 - it's cancelled,
-- they declined it (their own response is "declined"), or
+- they declined it (their own response is "declined"),
+- it's an all-day event (it has a date but no start time), or
 - its title is missing or blank.
 
 ## Step 4: Send
@@ -49,10 +50,10 @@ For each remaining event, build an object with exactly these fields, using only 
 
 - `event_id`: the calendar's own ID for the event. For a repeating event, the ID of that day's occurrence. If an event has no ID, skip it.
 - `title`: the event title, as written.
-- `start`: the start time in ISO 8601 with the UTC offset of their time zone, for example `2026-11-09T09:00:00-07:00`. For an all-day event, 00:00:00 on its first day.
-- `end`: the end time in the same format. For an all-day event, 00:00:00 on the day after its last day.
+- `start`: the start time in ISO 8601 with the UTC offset of their time zone, for example `2026-11-09T09:00:00-07:00`.
+- `end`: the end time in the same format.
 - `attendees_count`: the number of attendees listed, or 0 if none.
-- `is_all_day`: true for an all-day event, otherwise false.
+- `is_all_day`: `false`.
 - `status`: `"confirmed"`.
 - `updated_at`: when the event was last changed, in ISO 8601 with a UTC offset, from the calendar, or null if it doesn't say.
 
