@@ -2,7 +2,7 @@
   "mcpServers": {
     "calendar-sync-api": {
       "type": "http",
-      "url": "http://localhost:8081/mcp"
+      "url": "https://tempus-backend-fc5ebcdcfb7b.herokuapp.com/mcp"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "calendar-sync",
   "displayName": "Calendar Sync",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Sends the meetings you've already had to the team's time-tracking system, on demand (/sync-calendar) or every weekday morning (/setup-calendar-sync).",
   "author": {
     "name": "BasicsHQ"

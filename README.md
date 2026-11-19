@@ -1,8 +1,6 @@
 # Calendar Sync
 
-Calendar Sync is a Claude plugin. Once it's set up, Claude sends the meetings you've already had from your work calendar to the team's time-tracking system every weekday morning, so you don't have to log them by hand. Meetings are only sent after they've finished: each run covers the past seven days, and anything already sent is ignored, so Monday picks up Friday and the weekend and a missed run catches up the next day. Once sent, an entry isn't changed by later edits to the meeting. It sends each event's title, start and end times, attendee count, whether it's all-day, and when it was last changed. It doesn't send descriptions, attendee names or locations, and it skips meetings you declined, cancelled meetings and meetings that haven't ended yet.
-
-> **Local testing build:** the connector in `plugins/calendar-sync/.mcp.json` points at `http://localhost:8081/mcp`, so it only works in Claude Code on a computer running the BasicsHQ API locally (`basicshq/backend/scripts/calendarSync/start-local.sh http://localhost:8081`). Change it to the production address before sharing.
+Calendar Sync is a Claude plugin. Once it's set up, Claude sends the meetings you've already had from your work calendar to the team's time-tracking system every weekday morning, so you don't have to log them by hand. Meetings are only sent after they've finished: each run covers the past seven days, and anything already sent is ignored, so Monday picks up Friday and the weekend and a missed run catches up the next day. Once sent, an entry isn't changed by later edits to the meeting. It sends each event's title, start and end times, attendee count, and when it was last changed. It doesn't send descriptions, attendee names or locations, and it skips meetings you declined, cancelled meetings, all-day events and meetings that haven't ended yet.
 
 ## For colleagues
 
