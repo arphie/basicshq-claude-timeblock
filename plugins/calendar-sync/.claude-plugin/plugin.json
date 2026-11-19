@@ -1,11 +1,10 @@
 {
   "name": "calendar-sync",
   "displayName": "Calendar Sync",
-  "version": "0.2.0",
-  "description": "Sets up a daily task that sends your calendar events for the day to the team's time-tracking API.",
+  "version": "0.3.0",
+  "description": "Sends the meetings you've already had to the team's time-tracking system, on demand (/sync-calendar) or every weekday morning (/setup-calendar-sync).",
   "author": {
-    "name": "REPLACE-ME Your Name or Team",
-    "email": "replace-me@example.com"
+    "name": "BasicsHQ"
   },
   "license": "MIT"
 }

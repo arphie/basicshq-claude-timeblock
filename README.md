@@ -2,17 +2,19 @@
 
 Calendar Sync is a Claude plugin. Once it's set up, Claude sends the meetings you've already had from your work calendar to the team's time-tracking system every weekday morning, so you don't have to log them by hand. Meetings are only sent after they've finished: each run covers the past seven days, and anything already sent is ignored, so Monday picks up Friday and the weekend and a missed run catches up the next day. Once sent, an entry isn't changed by later edits to the meeting. It sends each event's title, start and end times, attendee count, whether it's all-day, and when it was last changed. It doesn't send descriptions, attendee names or locations, and it skips meetings you declined, cancelled meetings and meetings that haven't ended yet.
 
+> **Local testing build:** the connector in `plugins/calendar-sync/.mcp.json` points at `http://localhost:8081/mcp`, so it only works in Claude Code on a computer running the BasicsHQ API locally (`basicshq/backend/scripts/calendarSync/start-local.sh http://localhost:8081`). Change it to the production address before sharing.
+
 ## For colleagues
 
 You need a paid Claude plan and the Claude desktop app.
 
-1. **Add the marketplace.** In Claude, click **Customize** in the left sidebar, open **Plugins**, click **Add**, choose **Add marketplace**, then **Add from a repository**, and paste `REPLACE-ME-OWNER/REPLACE-ME-REPO`.
+1. **Add the marketplace.** In Claude, click **Customize** in the left sidebar, open **Plugins**, click **Add**, choose **Add marketplace**, then **Add from a repository**, and paste `arphie/basicshq-claude-timeblock`.
 2. **Install the plugin.** On the same **Plugins** page, open **Discover**, select **Calendar Sync**, and click **Add**.
 3. **Connect your calendar.** Click **Customize**, open **Connectors**, find **Google Calendar** (or **Outlook** if your work calendar is in Microsoft), click **Connect**, and sign in.
 4. **Sign in to Calendar Sync.** Click **Customize**, open **Plugins**, select **Calendar Sync**, and open its **Connectors** tab. Next to **calendar-sync-api**, click **Add** if you see it, then **Connect**, and sign in if asked. If you can't add it, ask your workspace admin.
 5. **Start setup.** Start a new chat, type `/setup-calendar-sync` (or just say "set up calendar sync"), and answer Claude's questions.
 
-To change the time later, type `/setup-calendar-sync` again. To stop syncing, click **Scheduled** in the left sidebar, open **Daily calendar sync**, and pause or delete it.
+To send your meetings right away, type `/sync-calendar` (or say "sync yesterday's meetings"). To change the daily time, type `/setup-calendar-sync` again. To stop syncing, click **Scheduled** in the left sidebar, open **Daily calendar sync**, and pause or delete it.
 
 ## For maintainers
 

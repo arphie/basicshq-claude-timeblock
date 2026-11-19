@@ -2,7 +2,7 @@
   "mcpServers": {
     "calendar-sync-api": {
       "type": "http",
-      "url": "https://REPLACE-ME.example.com/mcp"
+      "url": "http://localhost:8081/mcp"
     }
   }
 }

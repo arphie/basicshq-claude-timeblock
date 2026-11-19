@@ -80,6 +80,8 @@ Tell the person what you set up in one sentence, then add the note about approva
 >
 > When it runs, it may ask you to approve sending your calendar. To let it run without asking, click **Scheduled** in the left sidebar, open **Daily calendar sync**, and change its approval setting to run automatically.
 
+Then add: "To send your meetings right away at any time, type /sync-calendar."
+
 Stop there. Don't explain how the task works unless they ask.
 
 ## Task prompt template
